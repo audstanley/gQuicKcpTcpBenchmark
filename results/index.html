@@ -1,0 +1,43 @@
+<head>
+  <script src="/results/Charts.js"></script>
+  <script src="/results/jquery.js"></script>
+  <link rel="stylesheet" type="text/css" href="/results/Charts.css" />
+</head>
+<body>
+  <h1 style="margin-left: 2rem; margin-right: 2rem; margin-top: 4rem;">
+    Results of KCP, TCP, gQUIC Tests
+  </h1>
+  <div style="margin-left: 2rem; margin-right: 2rem; margin-top: 2rem;">
+    <canvas id="myChartLog" width="400" height="200"></canvas>
+  </div>
+
+  <div style="margin-left: 2rem; margin-right: 2rem; margin-top: 2rem;">
+    <canvas id="myChartLin" width="400" height="200"></canvas>
+  </div>
+</body>
+
+<script>
+  $.ajax({
+    dataType: "json",
+    url: "/results/log.json",
+    cache: false, //do not cache
+    success: function(json) {
+      console.log(json); // this will show the info it in firebug console
+
+      var ctxLog = document.getElementById("myChartLog").getContext("2d");
+      var myChartLog = new Chart(ctxLog, json);
+    }
+  });
+
+  $.ajax({
+    dataType: "json",
+    url: "/results/lin.json",
+    cache: false, //do not cache
+    success: function(json) {
+      console.log(json); // this will show the info it in firebug console
+
+      var ctxLin = document.getElementById("myChartLin").getContext("2d");
+      var myChartLin = new Chart(ctxLin, json);
+    }
+  });
+</script>

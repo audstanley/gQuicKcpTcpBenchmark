@@ -1,0 +1,199 @@
+{
+    "type": "line",
+    "data": {
+        "datasets": [
+            {
+                "label": "KCP",
+                "lineTension": 0.15,
+                "data": [
+                    1,
+                    2,
+                    3,
+                    5,
+                    7,
+                    11,
+                    17,
+                    25,
+                    38,
+                    56,
+                    84,
+                    126,
+                    188,
+                    282,
+                    422,
+                    631,
+                    944,
+                    1413,
+                    2113,
+                    3162,
+                    4732,
+                    7079,
+                    10593,
+                    15849,
+                    23714,
+                    35481,
+                    53088,
+                    79433,
+                    118850,
+                    177828,
+                    266073,
+                    398107,
+                    595662,
+                    891251,
+                    1333521,
+                    1995262,
+                    2985383,
+                    4466836,
+                    6683439,
+                    10000000
+                ],
+                "backgroundColor": [
+                    "rgba(255, 99, 132, 0.2)"
+                ],
+                "borderColor": [
+                    "rgba(255, 99, 132, 1)"
+                ],
+                "borderWidth": 0.5
+            },
+            {
+                "label": "TCP",
+                "lineTension": 0.15,
+                "data": [],
+                "backgroundColor": [
+                    "rgba(30, 255, 132, 0.2)"
+                ],
+                "borderColor": [
+                    "rgba(30, 255, 132, 1)"
+                ],
+                "borderWidth": 0.5
+            },
+            {
+                "label": "gQUIC",
+                "lineTension": 0.15,
+                "data": [],
+                "backgroundColor": [
+                    "rgba(30, 132, 255, 0.2)"
+                ],
+                "borderColor": [
+                    "rgba(30, 132, 255, 1)"
+                ],
+                "borderWidth": 0.5
+            }
+        ]
+    },
+    "options": {
+        "scales": {
+            "yAxes": [
+                {
+                    "id": "dataSize",
+                    "labels": [
+                        "1bytes",
+                        "2bytes",
+                        "3bytes",
+                        "5bytes",
+                        "7bytes",
+                        "11bytes",
+                        "17bytes",
+                        "25bytes",
+                        "38bytes",
+                        "56bytes",
+                        "84bytes",
+                        "126bytes",
+                        "188bytes",
+                        "282bytes",
+                        "422bytes",
+                        "631bytes",
+                        "944bytes",
+                        "1.41Kb",
+                        "2.11Kb",
+                        "3.16Kb",
+                        "4.73Kb",
+                        "7.08Kb",
+                        "10.6Kb",
+                        "15.8Kb",
+                        "23.7Kb",
+                        "35.5Kb",
+                        "53.1Kb",
+                        "79.4Kb",
+                        "119Kb",
+                        "178Kb",
+                        "266Kb",
+                        "398Kb",
+                        "596Kb",
+                        "891Kb",
+                        "1.33Mb",
+                        "2.00Mb",
+                        "2.99Mb",
+                        "4.47Mb",
+                        "6.68Mb",
+                        "10.0Mb"
+                    ],
+                    "ticks": {
+                        "beginAtZero": true
+                    },
+                    "scaleLabel": {
+                        "display": true,
+                        "labelString": "bytes"
+                    },
+                    "type": "logarithmic"
+                }
+            ],
+            "xAxes": [
+                {
+                    "id": "timeInNanoseconds",
+                    "display": true,
+                    "labelString": "Time in Nanoseconds",
+                    "labels": [
+                        "666us",
+                        "236us",
+                        "245us",
+                        "235us",
+                        "239us",
+                        "226us",
+                        "181us",
+                        "172us",
+                        "180us",
+                        "158us",
+                        "247us",
+                        "161us",
+                        "169us",
+                        "174us",
+                        "223us",
+                        "192us",
+                        "199us",
+                        "203us",
+                        "220us",
+                        "168us",
+                        "166us",
+                        "167us",
+                        "148us",
+                        "142us",
+                        "219us",
+                        "179us",
+                        "166us",
+                        "158us",
+                        "179us",
+                        "208us",
+                        "221us",
+                        "240us",
+                        "291us",
+                        "318us",
+                        "374us",
+                        "518us",
+                        "9.07ms",
+                        "9.56ms",
+                        "50.1ms",
+                        "1.08S"
+                    ],
+                    "ticks": {
+                        "beginAtZero": true
+                    },
+                    "scaleLabel": {
+                        "display": true,
+                        "labelString": "time"
+                    }
+                }
+            ]
+        }
+    }
+}
