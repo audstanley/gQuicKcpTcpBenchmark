@@ -4,23 +4,23 @@ let templateLog = {
     datasets: [
       {
         label: "KCP",
-        lineTension: 0.15,
+        lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(255, 99, 132, 0.2)"],
         borderColor: ["rgba(255, 99, 132, 1)"],
         borderWidth: 0.5
       },
       {
-        label: "TCP",
-        lineTension: 0.15,
+        label: "gQUIC",
+        lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 255, 132, 0.2)"],
         borderColor: ["rgba(30, 255, 132, 1)"],
         borderWidth: 0.5
       },
       {
-        label: "gQUIC",
-        lineTension: 0.15,
+        label: "TCP",
+        lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 132, 255, 0.2)"],
         borderColor: ["rgba(30, 132, 255, 1)"],
@@ -32,7 +32,22 @@ let templateLog = {
     scales: {
       yAxes: [
         {
-          id: "dataSize",
+          id: "time",
+          labels: [],
+          ticks: {
+            beginAtZero: true
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "time in nanoseconds"
+          },
+          type: "logarithmic"
+        }
+      ],
+      xAxes: [
+        {
+          id: "size",
+          display: true,
           labels: [],
           ticks: {
             beginAtZero: true
@@ -40,22 +55,6 @@ let templateLog = {
           scaleLabel: {
             display: true,
             labelString: "bytes"
-          },
-          type: "logarithmic"
-        }
-      ],
-      xAxes: [
-        {
-          id: "timeInNanoseconds",
-          display: true,
-          labelString: "Time in Nanoseconds",
-          labels: [],
-          ticks: {
-            beginAtZero: true
-          },
-          scaleLabel: {
-            display: true,
-            labelString: "time"
           }
         }
       ]
@@ -69,23 +68,23 @@ let templateLin = {
     datasets: [
       {
         label: "KCP",
-        lineTension: 0.15,
+        lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(255, 99, 132, 0.2)"],
         borderColor: ["rgba(255, 99, 132, 1)"],
         borderWidth: 0.5
       },
       {
-        label: "TCP",
-        lineTension: 0.15,
+        label: "gQUIC",
+        lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 255, 132, 0.2)"],
         borderColor: ["rgba(30, 255, 132, 1)"],
         borderWidth: 0.5
       },
       {
-        label: "gQUIC",
-        lineTension: 0.15,
+        label: "TCP",
+        lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 132, 255, 0.2)"],
         borderColor: ["rgba(30, 132, 255, 1)"],
@@ -97,7 +96,21 @@ let templateLin = {
     scales: {
       yAxes: [
         {
-          id: "dataSize",
+          id: "time",
+          labels: [],
+          ticks: {
+            beginAtZero: true
+          },
+          scaleLabel: {
+            display: true,
+            labelString: "time in nanoseconds"
+          }
+        }
+      ],
+      xAxes: [
+        {
+          id: "size",
+          display: true,
           labels: [],
           ticks: {
             beginAtZero: true
@@ -105,21 +118,6 @@ let templateLin = {
           scaleLabel: {
             display: true,
             labelString: "bytes"
-          }
-        }
-      ],
-      xAxes: [
-        {
-          id: "timeInNanoseconds",
-          display: true,
-          labelString: "Time in Nanoseconds",
-          labels: [],
-          ticks: {
-            beginAtZero: true
-          },
-          scaleLabel: {
-            display: true,
-            labelString: "time"
           }
         }
       ]

@@ -121,4 +121,4 @@ const sendBytesOverTCPAsync = async (host, port, buf) => {
 //   });
 // };
 
-export { tcpClientPromise };
+export { tcpClientPromise, clock };
