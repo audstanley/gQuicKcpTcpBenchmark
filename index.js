@@ -1,4 +1,4 @@
-import { http } from "./httpserver/runHTTP";
+import { launchHttpServerForViewing } from "./httpserver/runHTTP";
 import {
   runKCPTunnelClientAsAPromisifiedSubprocess,
   runKCPTunnelServerAsAPromisifiedSubprocess
@@ -12,13 +12,8 @@ import { spawn } from "child_process";
 import { gQuicServerLaunch } from "./gQuicFunctions/gQuicServer";
 import { gQuicClientLaunch } from "./gQuicFunctions/gQuicClient";
 
-const launchTheKCPConnectionBinaries = async () => {
-  let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess();
-  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389);
-  return Promise.all([serverStatusKCP, clientStatusKCP]);
-};
-
 const launchTheClientBinaries = async host => {
+  launchHttpServerForViewing();
   let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389); // client
   let tcpClientToKCP = await tcpClientPromise("localhost", 8389, size); // tcp => kcp client
   let gQuicClientRunPromise = await gQuicClientLaunch(host, 1234, size); // client
@@ -47,7 +42,7 @@ const launchTheServerBinaries = async () => {
 };
 
 const launchTheClientAndServerBinaries = async size => {
-  //let buf = await bufferForTransport(parseInt(size));
+  launchHttpServerForViewing();
   let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess(); // kcp server
   let tcpServerListen = await tcpServerPromise("localhost", 8388); // tcp => kcp server
   let justTcpServer = await tcpServerPromise("localhost", 8390); // just tcp server
