@@ -29,7 +29,6 @@ const launchTheClientBinaries = async host => {
 const launchTheServerBinaries = async () => {
   let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess();
   let tcpServerListen = await tcpServerPromise("localhost", 4001);
-  let tcpClientToKCP = await tcpClientPromise("localhost", 8388); // problem here
   let gQuicServerRunPromise = await gQuicServerLaunch("127.0.0.1", 1234); // server
   let justTcpServer = await tcpServerPromise("localhost", 8390); // just tcp server
   return Promise.all([
