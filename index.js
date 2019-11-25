@@ -12,6 +12,19 @@ import { spawn } from "child_process";
 import { gQuicServerLaunch } from "./gQuicFunctions/gQuicServer";
 import { gQuicClientLaunch } from "./gQuicFunctions/gQuicClient";
 
+const launchTheServerBinaries = async () => {
+  let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess();
+  let tcpServerListen = await tcpServerPromise("localhost", 8388); // tcp => kcp server
+  let gQuicServerRunPromise = await gQuicServerLaunch("127.0.0.1", 1234); // server
+  let justTcpServer = await tcpServerPromise("0.0.0.0", 8390); // just tcp server
+  return Promise.all([
+    serverStatusKCP,
+    tcpServerListen,
+    gQuicServerRunPromise,
+    justTcpServer
+  ]);
+};
+
 const launchTheClientBinaries = async (host, size) => {
   launchHttpServerForViewing();
   let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(
@@ -26,19 +39,6 @@ const launchTheClientBinaries = async (host, size) => {
     tcpClientToKCP,
     gQuicClientRunPromise,
     justTcpClient
-  ]);
-};
-
-const launchTheServerBinaries = async () => {
-  let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess();
-  let tcpServerListen = await tcpServerPromise("localhost", 8388); // tcp => kcp server
-  let gQuicServerRunPromise = await gQuicServerLaunch("127.0.0.1", 1234); // server
-  let justTcpServer = await tcpServerPromise("localhost", 8390); // just tcp server
-  return Promise.all([
-    serverStatusKCP,
-    tcpServerListen,
-    gQuicServerRunPromise,
-    justTcpServer
   ]);
 };
 
@@ -84,8 +84,8 @@ console.log(`flags: ${JSON.stringify(flags)}`);
 if (flags.option) {
   console.log(`FLAG OPTIONS: ${flags.option}`);
   if (flags.option === "client" && flags.host != undefined) {
-    launchTheClientBinaries("192.168.1.80", 100000000)
-      .then(() => {
+    launchTheClientBinaries(flags.host, 100000000)
+      .then(arrOfPromises => {
         return {
           kcp: arrOfPromises[1],
           gquic: arrOfPromises[2],
@@ -98,7 +98,7 @@ if (flags.option) {
       console.log("server connections running");
     });
   } else if (flags.option === "both") {
-    launchTheClientAndServerBinaries(100000000) // 100Mb = 100000000 bytes
+    launchTheClientAndServerBinaries("0.0.0.0", 100000000) // 100Mb = 100000000 bytes
       .then(arrOfPromises => {
         return {
           kcp: arrOfPromises[3],
