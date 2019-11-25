@@ -1,9 +1,9 @@
 import { spawn } from "child_process";
 
-const runKCPTunnelClientAsAPromisifiedSubprocess = port => {
+const runKCPTunnelClientAsAPromisifiedSubprocess = (port, host) => {
   const kcpClient = spawn("./kcpFunctions/client_linux_amd64", [
     "-r",
-    "0.0.0.0:4000",
+    `${host}:4000`,
     "-l",
     `:${port.toString()}`,
     "-mode",
