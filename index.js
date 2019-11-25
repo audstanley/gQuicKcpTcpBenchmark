@@ -34,7 +34,6 @@ const launchTheServerBinaries = async () => {
   return Promise.all([
     serverStatusKCP,
     tcpServerListen,
-    tcpClientToKCP,
     gQuicServerRunPromise,
     justTcpServer
   ]);
