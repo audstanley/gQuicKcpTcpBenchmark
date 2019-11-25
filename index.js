@@ -12,9 +12,12 @@ import { spawn } from "child_process";
 import { gQuicServerLaunch } from "./gQuicFunctions/gQuicServer";
 import { gQuicClientLaunch } from "./gQuicFunctions/gQuicClient";
 
-const launchTheClientBinaries = async host => {
+const launchTheClientBinaries = async (host, size) => {
   launchHttpServerForViewing();
-  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389); // client
+  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(
+    8389,
+    host
+  ); // client
   let tcpClientToKCP = await tcpClientPromise("localhost", 8389, size); // tcp => kcp client
   let gQuicClientRunPromise = await gQuicClientLaunch(host, 1234, size); // client
   let justTcpClient = await tcpClientPromise(host, 8390, size); // just tcp client
@@ -44,7 +47,10 @@ const launchTheClientAndServerBinaries = async size => {
   let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess(); // kcp server
   let tcpServerListen = await tcpServerPromise("localhost", 8388); // tcp => kcp server
   let justTcpServer = await tcpServerPromise("localhost", 8390); // just tcp server
-  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389); // kcp client
+  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(
+    8389,
+    "0.0.0.0"
+  ); // kcp client
   let tcpClientToKCP = await tcpClientPromise("localhost", 8389, size); // tcp => kcp client
   let justTcpClient = await tcpClientPromise("localhost", 8390, size); // just tcp client
   let gQuicServerRunPromise = await gQuicServerLaunch("127.0.0.1", 1234); // server
@@ -78,7 +84,7 @@ console.log(`flags: ${JSON.stringify(flags)}`);
 if (flags.option) {
   console.log(`FLAG OPTIONS: ${flags.option}`);
   if (flags.option === "client" && flags.host != undefined) {
-    launchTheClientBinaries()
+    launchTheClientBinaries("192.168.1.80", 100000000)
       .then(() => {
         return {
           kcp: arrOfPromises[1],
