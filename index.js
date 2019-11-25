@@ -83,8 +83,12 @@ console.log(`flags: ${JSON.stringify(flags)}`);
 
 if (flags.option) {
   console.log(`FLAG OPTIONS: ${flags.option}`);
-  if (flags.option === "client" && flags.host != undefined) {
-    launchTheClientBinaries(flags.host, 100000000)
+  if (
+    flags.option === "client" &&
+    flags.host != undefined &&
+    flags.dataSize != undefined
+  ) {
+    launchTheClientBinaries(flags.host, parseInt(flags.dataSize))
       .then(arrOfPromises => {
         return {
           kcp: arrOfPromises[1],

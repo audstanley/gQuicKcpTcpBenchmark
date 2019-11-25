@@ -6,7 +6,7 @@
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha ./test/run.test.js",
     "start": "node -r esm index.js",
-    "start-client": "npm run start -- --option client --host 192.168.1.80",
+    "start-client": "npm run start -- --option client --host 192.168.1.80 --dataSize 1000000000",
     "start-server": "npm run start -- --option server",
     "start-both": "npm run start -- --option both",
     "quic": "node -r esm app.js"
