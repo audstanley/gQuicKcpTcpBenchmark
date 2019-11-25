@@ -18,16 +18,32 @@ const launchTheKCPConnectionBinaries = async () => {
   return Promise.all([serverStatusKCP, clientStatusKCP]);
 };
 
-const launchTheClientBinaries = async () => {
-  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389);
-  return Promise.all([clientStatusKCP]);
+const launchTheClientBinaries = async host => {
+  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389); // client
+  let tcpClientToKCP = await tcpClientPromise("localhost", 8389, size); // tcp => kcp client
+  let gQuicClientRunPromise = await gQuicClientLaunch(host, 1234, size); // client
+  let justTcpClient = await tcpClientPromise(host, 8390, size); // just tcp client
+  return Promise.all([
+    clientStatusKCP,
+    tcpClientToKCP,
+    gQuicClientRunPromise,
+    justTcpClient
+  ]);
 };
 
 const launchTheServerBinaries = async () => {
   let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess();
   let tcpServerListen = await tcpServerPromise("localhost", 4001);
   let tcpClientToKCP = await tcpClientPromise("localhost", 8388); // problem here
-  return Promise.all([serverStatusKCP, tcpServerListen, tcpClientToKCP]);
+  let gQuicServerRunPromise = await gQuicServerLaunch("127.0.0.1", 1234); // server
+  let justTcpServer = await tcpServerPromise("localhost", 8390); // just tcp server
+  return Promise.all([
+    serverStatusKCP,
+    tcpServerListen,
+    tcpClientToKCP,
+    gQuicServerRunPromise,
+    justTcpServer
+  ]);
 };
 
 const launchTheClientAndServerBinaries = async size => {
@@ -60,8 +76,7 @@ const sendDataWithClientHandler = async (size, clientHandler) => {
 // needs to be defined before parsing args into the flags const
 args
   .option("option", 'Either "server" mode, Or "client" mode')
-  .option("clientPort", "The port on which the client will be running on")
-  .option("serverPort", "The port on which the server will be running on")
+  .option("host", "The port on which the client will be running on")
   .option("dataSize", "the size of data chunks in Kb, 1Mb default", 1000);
 
 const flags = args.parse(process.argv);
@@ -69,14 +84,19 @@ console.log(`flags: ${JSON.stringify(flags)}`);
 
 if (flags.option) {
   console.log(`FLAG OPTIONS: ${flags.option}`);
-  if (flags.option === "client") {
-    launchTheClientBinaries().then(() => {
-      console.log("client connections running");
-    });
+  if (flags.option === "client" && flags.host != undefined) {
+    launchTheClientBinaries()
+      .then(() => {
+        return {
+          kcp: arrOfPromises[1],
+          gquic: arrOfPromises[2],
+          tcp: arrOfPromises[3]
+        };
+      })
+      .then(data => processGraph(data));
   } else if (flags.option === "server") {
     launchTheServerBinaries().then(arrOfPromises => {
       console.log("server connections running");
-      // arrOfPromises[1] is the tcp server event
     });
   } else if (flags.option === "both") {
     launchTheClientAndServerBinaries(100000000) // 100Mb = 100000000 bytes
@@ -87,66 +107,60 @@ if (flags.option) {
           tcp: arrOfPromises[7]
         };
       }) // resolve the data part othe the arrayOfPromises
-      .then(data => {
-        console.log(`data: ${JSON.stringify(data, null, 2)}`);
-
-        let mergedClockTimes = data.kcp
-          .concat(data.gquic)
-          .sort((a, b) => a.time - b.time)
-          .map(e => e.time);
-        let arrOfKcpData = data.kcp.map(e => e.time);
-        let xAxisMap = data.kcp.map(
-          (e, i) =>
-            `size:${e.byteStr},\nkcp time:${e.timeStr},\ngquic time: ${data.gquic[i].timeStr}\n tcp time: ${data.tcp[i].timeStr}`
-        );
-        let kcpTime = data.kcp.map(e => e.time);
-        let gquicTime = data.gquic.map(e => e.time);
-        let tcpTime = data.tcp.map(e => e.time);
-
-        templateLog.data.datasets[0].data = kcpTime; // kcp time
-        templateLog.data.datasets[1].data = gquicTime; // gquic time
-        templateLog.data.datasets[2].data = tcpTime; // tcp time
-        templateLog.options.scales.xAxes[0].labels = xAxisMap;
-        templateLog.options.scales.yAxes[0].labels = arrOfKcpData;
-
-        templateLin.data.datasets[0].data = kcpTime; // kcp time
-        templateLin.data.datasets[1].data = gquicTime; // gquic time
-        templateLin.data.datasets[2].data = tcpTime; // tcp time
-        templateLin.options.scales.xAxes[0].labels = xAxisMap;
-        templateLin.options.scales.yAxes[0].labels = arrOfKcpData;
-
-        writeFile(
-          "./results/log.json",
-          JSON.stringify(templateLog, null, 4),
-          err => {
-            if (err) throw err;
-            else {
-              console.log("File Saved");
-            }
-          }
-        );
-
-        writeFile(
-          "./results/lin.json",
-          JSON.stringify(templateLin, null, 4),
-          err => {
-            if (err) throw err;
-            else {
-              console.log("File Saved");
-            }
-          }
-        );
-
-        spawn("google-chrome", ["http://localhost:8080/results"]);
-        // let results = await arrOfPromises[3];
-        // console.log(`BABOOOOOSH: ${results}`);
-
-        return new Promise((resolve, reject) => {
-          setTimeout(resolve, 3000);
-        });
-      })
+      .then(data => processGraph(data))
       .catch(err => {
         console.log(`There was a problem running both servers: ${err}`);
       });
   }
 }
+
+const processGraph = data => {
+  console.log(`data: ${JSON.stringify(data, null, 2)}`);
+
+  let mergedClockTimes = data.kcp
+    .concat(data.gquic)
+    .sort((a, b) => a.time - b.time)
+    .map(e => e.time);
+  let arrOfKcpData = data.kcp.map(e => e.time);
+  let xAxisMap = data.kcp.map(
+    (e, i) =>
+      `size:${e.byteStr},\nkcp time:${e.timeStr},\ngquic time: ${data.gquic[i].timeStr}\n tcp time: ${data.tcp[i].timeStr}`
+  );
+  let kcpTime = data.kcp.map(e => e.time);
+  let gquicTime = data.gquic.map(e => e.time);
+  let tcpTime = data.tcp.map(e => e.time);
+
+  templateLog.data.datasets[0].data = kcpTime; // kcp time
+  templateLog.data.datasets[1].data = gquicTime; // gquic time
+  templateLog.data.datasets[2].data = tcpTime; // tcp time
+  templateLog.options.scales.xAxes[0].labels = xAxisMap;
+  templateLog.options.scales.yAxes[0].labels = arrOfKcpData;
+
+  templateLin.data.datasets[0].data = kcpTime; // kcp time
+  templateLin.data.datasets[1].data = gquicTime; // gquic time
+  templateLin.data.datasets[2].data = tcpTime; // tcp time
+  templateLin.options.scales.xAxes[0].labels = xAxisMap;
+  templateLin.options.scales.yAxes[0].labels = arrOfKcpData;
+
+  writeFile("./results/log.json", JSON.stringify(templateLog, null, 4), err => {
+    if (err) throw err;
+    else {
+      console.log("File Saved");
+    }
+  });
+
+  writeFile("./results/lin.json", JSON.stringify(templateLin, null, 4), err => {
+    if (err) throw err;
+    else {
+      console.log("File Saved");
+    }
+  });
+
+  spawn("google-chrome", ["http://localhost:8080/results"]);
+  // let results = await arrOfPromises[3];
+  // console.log(`BABOOOOOSH: ${results}`);
+
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, 3000);
+  });
+};
