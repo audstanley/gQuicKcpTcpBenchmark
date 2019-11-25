@@ -32,10 +32,12 @@ const launchTheServerBinaries = async () => {
 
 const launchTheClientAndServerBinaries = async size => {
   //let buf = await bufferForTransport(parseInt(size));
-  let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess(); // server
-  let tcpServerListen = await tcpServerPromise("localhost", 8388); // server
-  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389); // client
-  let tcpClientToKCP = await tcpClientPromise("localhost", 8389, size); // client
+  let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess(); // kcp server
+  let tcpServerListen = await tcpServerPromise("localhost", 8388); // tcp => kcp server
+  let justTcpServer = await tcpServerPromise("localhost", 8390); // just tcp server
+  let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(8389); // kcp client
+  let tcpClientToKCP = await tcpClientPromise("localhost", 8389, size); // tcp => kcp client
+  let justTcpClient = await tcpClientPromise("localhost", 8390, size); // just tcp client
   let gQuicServerRunPromise = await gQuicServerLaunch("127.0.0.1", 1234); // server
   let gQuicClientRunPromise = await gQuicClientLaunch("127.0.0.1", 1234, size); // client
   return Promise.all([
@@ -44,7 +46,9 @@ const launchTheClientAndServerBinaries = async size => {
     clientStatusKCP,
     tcpClientToKCP,
     gQuicServerRunPromise,
-    gQuicClientRunPromise
+    gQuicClientRunPromise,
+    justTcpServer,
+    justTcpClient
   ]);
 };
 
@@ -79,7 +83,8 @@ if (flags.option) {
       .then(arrOfPromises => {
         return {
           kcp: arrOfPromises[3],
-          gquic: arrOfPromises[5]
+          gquic: arrOfPromises[5],
+          tcp: arrOfPromises[7]
         };
       }) // resolve the data part othe the arrayOfPromises
       .then(data => {
@@ -92,18 +97,21 @@ if (flags.option) {
         let arrOfKcpData = data.kcp.map(e => e.time);
         let xAxisMap = data.kcp.map(
           (e, i) =>
-            `size:${e.byteStr},\nkcp time:${e.timeStr},\ngquic time: ${data.gquic[i].timeStr}`
+            `size:${e.byteStr},\nkcp time:${e.timeStr},\ngquic time: ${data.gquic[i].timeStr}\n tcp time: ${data.tcp[i].timeStr}`
         );
         let kcpTime = data.kcp.map(e => e.time);
         let gquicTime = data.gquic.map(e => e.time);
+        let tcpTime = data.tcp.map(e => e.time);
 
         templateLog.data.datasets[0].data = kcpTime; // kcp time
         templateLog.data.datasets[1].data = gquicTime; // gquic time
+        templateLog.data.datasets[2].data = tcpTime; // tcp time
         templateLog.options.scales.xAxes[0].labels = xAxisMap;
         templateLog.options.scales.yAxes[0].labels = arrOfKcpData;
 
         templateLin.data.datasets[0].data = kcpTime; // kcp time
         templateLin.data.datasets[1].data = gquicTime; // gquic time
+        templateLin.data.datasets[2].data = tcpTime; // tcp time
         templateLin.options.scales.xAxes[0].labels = xAxisMap;
         templateLin.options.scales.yAxes[0].labels = arrOfKcpData;
 

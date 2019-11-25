@@ -11,7 +11,7 @@ let templateLog = {
         borderWidth: 0.5
       },
       {
-        label: "gQUIC time in nanoseconds",
+        label: 'gQUIC time in nanoseconds (no "drain event")',
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 255, 132, 0.2)"],
@@ -82,7 +82,7 @@ let templateLin = {
         borderWidth: 0.5
       },
       {
-        label: "gQUIC time in nanoseconds",
+        label: 'gQUIC time in nanoseconds (no "drain event")',
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 255, 132, 0.2)"],
