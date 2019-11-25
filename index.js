@@ -84,27 +84,28 @@ if (flags.option) {
       }) // resolve the data part othe the arrayOfPromises
       .then(data => {
         console.log(`data: ${JSON.stringify(data, null, 2)}`);
-        // Liner Data for KCP
 
         let mergedClockTimes = data.kcp
           .concat(data.gquic)
           .sort((a, b) => a.time - b.time)
           .map(e => e.time);
-        let arrOfKcpData = data.kcp.map(e => e.size);
-
-        templateLog.data.datasets[0].data = arrOfKcpData;
-        templateLog.options.scales.xAxes[0].labels = data.kcp.map(
-          e => e.byteStr
+        let arrOfKcpData = data.kcp.map(e => e.time);
+        let xAxisMap = data.kcp.map(
+          (e, i) =>
+            `size:${e.byteStr},\nkcp time:${e.timeStr},\ngquic time: ${data.gquic[i].timeStr}`
         );
-        templateLog.options.scales.yAxes[0].labels = mergedClockTimes;
-        templateLog.data.datasets[1].data = data.gquic.map(e => e.time);
+        let kcpTime = data.kcp.map(e => e.time);
+        let gquicTime = data.gquic.map(e => e.time);
 
-        templateLin.data.datasets[0].data = arrOfKcpData;
-        templateLin.options.scales.xAxes[0].labels = data.kcp.map(
-          e => e.byteStr
-        );
-        templateLin.options.scales.yAxes[0].labels = mergedClockTimes;
-        templateLin.data.datasets[1].data = data.gquic.map(e => e.time);
+        templateLog.data.datasets[0].data = kcpTime; // kcp time
+        templateLog.data.datasets[1].data = gquicTime; // gquic time
+        templateLog.options.scales.xAxes[0].labels = xAxisMap;
+        templateLog.options.scales.yAxes[0].labels = arrOfKcpData;
+
+        templateLin.data.datasets[0].data = kcpTime; // kcp time
+        templateLin.data.datasets[1].data = gquicTime; // gquic time
+        templateLin.options.scales.xAxes[0].labels = xAxisMap;
+        templateLin.options.scales.yAxes[0].labels = arrOfKcpData;
 
         writeFile(
           "./results/log.json",

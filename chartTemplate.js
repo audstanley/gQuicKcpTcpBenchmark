@@ -3,7 +3,7 @@ let templateLog = {
   data: {
     datasets: [
       {
-        label: "KCP",
+        label: "KCP time in nanoseconds",
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(255, 99, 132, 0.2)"],
@@ -11,7 +11,7 @@ let templateLog = {
         borderWidth: 0.5
       },
       {
-        label: "gQUIC",
+        label: "gQUIC time in nanoseconds",
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 255, 132, 0.2)"],
@@ -19,7 +19,7 @@ let templateLog = {
         borderWidth: 0.5
       },
       {
-        label: "TCP",
+        label: "TCP time in nanoseconds",
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 132, 255, 0.2)"],
@@ -29,6 +29,13 @@ let templateLog = {
     ]
   },
   options: {
+    animation: {
+      duration: 3000
+    },
+    responsiveAnimationDuration: 2000,
+    hover: {
+      animationDuration: 1000
+    },
     scales: {
       yAxes: [
         {
@@ -67,7 +74,7 @@ let templateLin = {
   data: {
     datasets: [
       {
-        label: "KCP",
+        label: "KCP time in nanoseconds",
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(255, 99, 132, 0.2)"],
@@ -75,7 +82,7 @@ let templateLin = {
         borderWidth: 0.5
       },
       {
-        label: "gQUIC",
+        label: "gQUIC time in nanoseconds",
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 255, 132, 0.2)"],
@@ -83,7 +90,7 @@ let templateLin = {
         borderWidth: 0.5
       },
       {
-        label: "TCP",
+        label: "TCP time in nanoseconds",
         lineTension: 0.4,
         data: [],
         backgroundColor: ["rgba(30, 132, 255, 0.2)"],
@@ -93,6 +100,13 @@ let templateLin = {
     ]
   },
   options: {
+    animation: {
+      duration: 3000
+    },
+    responsiveAnimationDuration: 2000,
+    hover: {
+      animationDuration: 1000
+    },
     scales: {
       yAxes: [
         {
