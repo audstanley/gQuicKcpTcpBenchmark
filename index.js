@@ -102,7 +102,7 @@ if (flags.option) {
       console.log("server connections running");
     });
   } else if (flags.option === "both") {
-    launchTheClientAndServerBinaries("0.0.0.0", 100000000) // 100Mb = 100000000 bytes
+    launchTheClientAndServerBinaries(flags.host, parseInt(flags.dataSize)) // 100Mb = 100000000 bytes
       .then(arrOfPromises => {
         return {
           kcp: arrOfPromises[3],
