@@ -1,18 +1,18 @@
 {
   "name": "final",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a benchmark project for KCP, gQuic (third party library), and TCP",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha ./test/run.test.js",
     "start": "node -r esm index.js",
-    "start-client": "npm run start -- --option client --host 192.168.1.80 --dataSize 1000000000",
+    "start-client": "npm run start -- --option client --host 192.168.1.80 --dataSize 100000000",
     "start-server": "npm run start -- --option server",
-    "start-both": "npm run start -- --option both",
+    "start-both": "npm run start -- --option both --dataSize 100000000",
     "quic": "node -r esm app.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Richard Stanley",
+  "license": "MIT",
   "devDependencies": {
     "mocha": "^6.2.1"
   },

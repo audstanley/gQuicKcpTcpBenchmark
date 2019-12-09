@@ -28,7 +28,7 @@ const runKCPTunnelClientAsAPromisifiedSubprocess = (port, host) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve("kcp tunnel client is now running");
-    }, 20000);
+    }, 5000);
   });
 };
 
@@ -58,7 +58,7 @@ const runKCPTunnelServerAsAPromisifiedSubprocess = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve("kcp tunnel server is now running");
-    }, 20000);
+    }, 5000);
   });
 };
 export {

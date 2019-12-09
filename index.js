@@ -42,19 +42,19 @@ const launchTheClientBinaries = async (host, size) => {
   ]);
 };
 
-const launchTheClientAndServerBinaries = async size => {
+const launchTheClientAndServerBinaries = async (host, size) => {
   launchHttpServerForViewing();
   let serverStatusKCP = await runKCPTunnelServerAsAPromisifiedSubprocess(); // kcp server
-  let tcpServerListen = await tcpServerPromise("localhost", 8388); // tcp => kcp server
-  let justTcpServer = await tcpServerPromise("localhost", 8390); // just tcp server
+  let tcpServerListen = await tcpServerPromise(host, 8388); // tcp => kcp server
+  let justTcpServer = await tcpServerPromise(host, 8390); // just tcp server
   let clientStatusKCP = await runKCPTunnelClientAsAPromisifiedSubprocess(
     8389,
-    "0.0.0.0"
+    host
   ); // kcp client
-  let tcpClientToKCP = await tcpClientPromise("localhost", 8389, size); // tcp => kcp client
-  let justTcpClient = await tcpClientPromise("localhost", 8390, size); // just tcp client
-  let gQuicServerRunPromise = await gQuicServerLaunch("127.0.0.1", 1234); // server
-  let gQuicClientRunPromise = await gQuicClientLaunch("127.0.0.1", 1234, size); // client
+  let tcpClientToKCP = await tcpClientPromise(host, 8389, size); // tcp => kcp client
+  let justTcpClient = await tcpClientPromise(host, 8390, size); // just tcp client
+  let gQuicServerRunPromise = await gQuicServerLaunch(host, 8391); // server
+  let gQuicClientRunPromise = await gQuicClientLaunch(host, 8391, size); // client
   return Promise.all([
     serverStatusKCP,
     tcpServerListen,
@@ -96,7 +96,7 @@ if (flags.option) {
           tcp: arrOfPromises[3]
         };
       })
-      .then(data => processGraph(data));
+      .then(data => processGraph(data, flags.host));
   } else if (flags.option === "server") {
     launchTheServerBinaries().then(arrOfPromises => {
       console.log("server connections running");
@@ -110,14 +110,14 @@ if (flags.option) {
           tcp: arrOfPromises[7]
         };
       }) // resolve the data part othe the arrayOfPromises
-      .then(data => processGraph(data))
+      .then(data => processGraph(data, flags.host))
       .catch(err => {
         console.log(`There was a problem running both servers: ${err}`);
       });
   }
 }
 
-const processGraph = data => {
+const processGraph = (data, host) => {
   console.log(`data: ${JSON.stringify(data, null, 2)}`);
 
   let mergedClockTimes = data.kcp
@@ -137,12 +137,14 @@ const processGraph = data => {
   templateLog.data.datasets[1].data = gquicTime; // gquic time
   templateLog.data.datasets[2].data = tcpTime; // tcp time
   templateLog.options.scales.xAxes[0].labels = xAxisMap;
+  templateLog.options.scales.xAxes[0].scaleLabel.labelString = `size on host: ${host}`;
   templateLog.options.scales.yAxes[0].labels = arrOfKcpData;
 
   templateLin.data.datasets[0].data = kcpTime; // kcp time
   templateLin.data.datasets[1].data = gquicTime; // gquic time
   templateLin.data.datasets[2].data = tcpTime; // tcp time
   templateLin.options.scales.xAxes[0].labels = xAxisMap;
+  templateLog.options.scales.xAxes[0].scaleLabel.labelString = `size on host: ${host}`;
   templateLin.options.scales.yAxes[0].labels = arrOfKcpData;
 
   writeFile("./results/log.json", JSON.stringify(templateLog, null, 4), err => {

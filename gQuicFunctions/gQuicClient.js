@@ -8,7 +8,7 @@ import {
 import { clock } from "../tcpClient/tcp";
 
 const gQuicClientLaunch = async (host, port, size) => {
-  let arrayOfBytes = populateLogSet(parseInt(size), 40);
+  let arrayOfBytes = populateLogSet(size, 40);
   let bufferArray = bufferArrayForTransport(arrayOfBytes);
 
   let clockTimes = [];

@@ -18,7 +18,7 @@ const bufferPromise = n => {
 
 const populateLogSet = (bytes, split) => {
   const arrayOfBytes = Array.from(
-    Array(split),
+    new Array(split),
     (_, x) => Math.round(Math.pow(bytes, (x + 1) / split)) // set the max [bytes], and this will make a log set of bytes to send UP TO the bytes value.
   );
   return arrayOfBytes;

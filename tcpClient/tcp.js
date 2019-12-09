@@ -14,7 +14,7 @@ const clock = start => {
 };
 
 const tcpClientPromise = async (host, port, size) => {
-  let arrayOfBytes = populateLogSet(parseInt(size), 40);
+  const arrayOfBytes = populateLogSet(size, 40);
   console.log(`Populating the Array of Bytes... this may take a while.`);
   let bufferArray = bufferArrayForTransport(arrayOfBytes);
   let clockTimes = [];
@@ -91,34 +91,5 @@ const sendBytesOverTCPAsync = async (host, port, buf) => {
   const client = await connectToClient(host, port);
   return writeToTheBufferPromisified(client, buf);
 };
-
-// const sendBytesOverTCPPromised = (host, port, buf) => {
-//   return new Promise((resolve, reject) => {
-//     if (typeof buf === "object" && !(buf instanceof Buffer)) {
-//       resolve(`Nothing to see here ${buf.constructor}`);
-//     } else if (typeof buf === "object" && buf instanceof Buffer) {
-//       console.log(`Launching TCP Client ${host}:${port}`);
-//       const client = net.createConnection({ host: host, port: port }, () => {
-//         // 'connect' listener.
-//         //console.log("connected to server!");
-//         let start = clock();
-//         client.write(buf, () => {
-//           resolve(clock(start));
-//           client.end();
-//         });
-//       });
-
-//       client.on("end", () => {
-//         //console.log("disconnected from server");
-//       });
-
-//       client.on("error", err => {
-//         reject(`client/tcp.js Error: ${err}`);
-//       });
-//     } else {
-//       reject(`Can't send ${typeof buf}`);
-//     }
-//   });
-// };
 
 export { tcpClientPromise, clock };
