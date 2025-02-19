@@ -14,7 +14,7 @@
   "author": "Richard Stanley",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^10.2.0"
+    "mocha": "^10.8.2"
   },
   "dependencies": {
     "args": "^5.0.1",
